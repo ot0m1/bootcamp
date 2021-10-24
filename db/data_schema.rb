@@ -1,2 +1,3 @@
-# encoding: UTF-8
-DataMigrate::Data.define(version: 20211018121231)
+# frozen_string_literal: true
+
+DataMigrate::Data.define(version: 20_211_018_121_231)
