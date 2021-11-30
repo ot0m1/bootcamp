@@ -301,4 +301,52 @@ class NotificationsTest < ApplicationSystemTestCase
     wait_for_vuejs
     assert_text 'コメントのテスト通知'
   end
+
+  test 'show the total number of mentions on the mentioned tab' do
+    user = users(:sotugyou)
+    expected_total_number_of_mentions = user.notifications.where(kind: :mentioned).count
+
+    visit_with_auth '/notifications', user.login_name
+
+    within '.page-tabs__item', text: 'メンション' do
+      assert_text format('メンション （%d）', expected_total_number_of_mentions)
+    end
+  end
+
+  test 'show the number of unread mentions on the badge of the mentioned tab' do
+    user = users(:sotugyou)
+    expected_number_of_unread_mentions = user.notifications.where(kind: :mentioned, read: false).count
+
+    visit_with_auth '/notifications', user.login_name
+
+    within '.page-tabs__item', text: 'メンション' do
+      actual_number_of_unread_mentions = find('.a-notification-count').text.to_i
+
+      assert_equal expected_number_of_unread_mentions, actual_number_of_unread_mentions
+    end
+  end
+
+  test 'decrease the value displayed on the badge of the mentioned tab by 1 if read an unread mention' do
+    visit_with_auth '/notifications', 'sotugyou'
+    before_read = find('.page-tabs__item', text: 'メンション').find('.a-notification-count').text.to_i
+
+    find('.is-unread', text: 'komagataさんからメンションがきました。').click
+
+    visit '/notifications'
+    wait_for_vuejs
+    after_read = find('.page-tabs__item', text: 'メンション').find('.a-notification-count').text.to_i
+
+    assert_equal before_read - 1, after_read
+  end
+
+  test 'don\'t show the badge on the mentioned tab if no unread mentions' do
+    user = users(:sotugyou)
+    user.notifications.where(kind: :mentioned, read: false).update_all(read: true) # rubocop:disable Rails/SkipsModelValidations
+
+    visit_with_auth '/notifications', user.login_name
+
+    within '.page-tabs__item', text: 'メンション' do
+      assert_no_selector '.a-notification-count'
+    end
+  end
 end
