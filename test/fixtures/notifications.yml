@@ -30,12 +30,20 @@ notification_mentioned_and_already_read:
   path: "/reports/<%= ActiveRecord::FixtureSet.identify(:report6) %>#comment_<%= ActiveRecord::FixtureSet.identify(:comment17)%>"
   read: true
 
-notification_mentioned_and_unread:
+notification_mentioned_and_unread_1:
   kind: 2
   user: kimura
   sender: hajime
   message: hajimeさんからメンションがきました。
   path: "/reports/<%= ActiveRecord::FixtureSet.identify(:report7) %>#comment_<%= ActiveRecord::FixtureSet.identify(:comment18)%>"
+  read: false
+
+notification_mentioned_and_unread_2:
+  kind: 2
+  user: kimura
+  sender: yamada
+  message: yamadaさんからメンションがきました。
+  path: "/reports/<%= ActiveRecord::FixtureSet.identify(:report8) %>#comment_<%= ActiveRecord::FixtureSet.identify(:comment19)%>"
   read: false
 
 notification_read:
