@@ -101,12 +101,12 @@ comment16:
 comment17:
   user: machida
   commentable: report6 (Report)
-  description: "@sotugyou メンションありの通知を発生させる"
+  description: "@kimura メンションありの通知を発生させる"
 
 comment18:
   user: hajime
   commentable: report7 (Report)
-  description: "@sotugyou メンションありの通知を発生させる"
+  description: "@kimura メンションありの通知を発生させる"
 
 <% (1..20).each do |i| %>
 comment<%= i + 18 %>:

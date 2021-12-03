@@ -24,7 +24,7 @@ notification_mentioned:
 
 notification_mentioned_and_already_read:
   kind: 2
-  user: sotugyou
+  user: kimura
   sender: machida
   message: machidaさんからメンションがきました。
   path: "/reports/<%= ActiveRecord::FixtureSet.identify(:report6) %>#comment_<%= ActiveRecord::FixtureSet.identify(:comment17)%>"
@@ -32,7 +32,7 @@ notification_mentioned_and_already_read:
 
 notification_mentioned_and_unread:
   kind: 2
-  user: sotugyou
+  user: kimura
   sender: hajime
   message: hajimeさんからメンションがきました。
   path: "/reports/<%= ActiveRecord::FixtureSet.identify(:report7) %>#comment_<%= ActiveRecord::FixtureSet.identify(:comment18)%>"
