@@ -22,7 +22,7 @@ notification_mentioned:
   path: "/reports/<%= ActiveRecord::FixtureSet.identify(:report5) %>#comment_<%= ActiveRecord::FixtureSet.identify(:comment9)%>"
   read: false
 
-notification_mentioned_and_already-read:
+notification_mentioned_and_already_read:
   kind: 2
   user: sotugyou
   sender: machida
