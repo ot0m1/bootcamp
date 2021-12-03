@@ -330,7 +330,7 @@ class NotificationsTest < ApplicationSystemTestCase
     visit_with_auth '/notifications', 'kimura'
     before_read = find('.page-tabs__item', text: 'メンション').find('.a-notification-count').text.to_i
 
-    find('.is-unread', text: 'komagataさんからメンションがきました。').click
+    first('.is-unread', text: 'メンションがきました').click
 
     visit '/notifications'
     wait_for_vuejs
