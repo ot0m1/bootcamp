@@ -304,7 +304,7 @@ class NotificationsTest < ApplicationSystemTestCase
 
   test 'show the total number of mentions on the mentioned tab' do
     user = users(:kimura)
-    expected_total_number_of_mentions = user.notifications.by_target(:mention).count
+    expected_total_number_of_mentions = user.notifications.by_target(:mention).where(created_at: Notification.into_one.values).count
 
     visit_with_auth '/notifications', user.login_name
 
@@ -315,7 +315,7 @@ class NotificationsTest < ApplicationSystemTestCase
 
   test 'show the number of unread mentions on the badge of the mentioned tab' do
     user = users(:kimura)
-    expected_number_of_unread_mentions = user.notifications.by_target(:mention).where(read: false).count
+    expected_number_of_unread_mentions = user.notifications.by_target(:mention).unreads.count
 
     visit_with_auth '/notifications', user.login_name
 
