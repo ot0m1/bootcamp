@@ -11,7 +11,7 @@ class NotificationsController < ApplicationController
   def show
     path = @notification.read_attribute :path
     @notifications = current_user.notifications.where(path: path)
-    @notifications.update(read: true)
+    current_user.mark_all_as_read_and_delete_caches_without_callbacks(target_notifications: @notifications)
     redirect_to path
   end
 

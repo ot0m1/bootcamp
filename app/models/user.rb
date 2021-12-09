@@ -572,6 +572,12 @@ class User < ApplicationRecord
     end
   end
 
+  def mark_all_as_read_and_delete_caches_without_callbacks(target_notifications: nil)
+    notifications = target_notifications || notifications
+    notifications.update_all(read: true, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    Cache.delete_mentioned_and_unread_notification_count(id)
+  end
+
   private
 
   def password_required?
