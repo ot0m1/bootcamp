@@ -53,185 +53,201 @@ class Notification < ApplicationRecord
   after_update NotificationCallbacks.new
   after_destroy NotificationCallbacks.new
 
-  def self.came_comment(comment, receiver, message)
-    Notification.create!(
-      kind: 0,
-      user: receiver,
-      sender: comment.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(comment.commentable),
-      message: message,
-      read: false
-    )
+  class << self
+    def came_comment(comment, receiver, message)
+      Notification.create!(
+        kind: 0,
+        user: receiver,
+        sender: comment.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(comment.commentable),
+        message: message,
+        read: false
+      )
+    end
+
+    def checked(check)
+      Notification.create!(
+        kind: 1,
+        user: check.receiver,
+        sender: check.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(check.checkable),
+        message: "#{check.sender.login_name}さんが#{check.checkable.title}を確認しました。",
+        read: false
+      )
+    end
+
+    def mentioned(mentionable, receiver)
+      Notification.create!(
+        kind: 2,
+        user: receiver,
+        sender: mentionable.sender,
+        path: mentionable.path,
+        message: "#{mentionable.sender.login_name}さんからメンションがきました。",
+        read: false
+      )
+    end
+
+    def submitted(subject, receiver, message)
+      Notification.create!(
+        kind: 3,
+        user: receiver,
+        sender: subject.user,
+        path: Rails.application.routes.url_helpers.polymorphic_path(subject),
+        message: message,
+        read: false
+      )
+    end
+
+    def came_answer(answer)
+      Notification.create!(
+        kind: 4,
+        user: answer.receiver,
+        sender: answer.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(answer.question),
+        message: "#{answer.user.login_name}さんから回答がありました。",
+        read: false
+      )
+    end
+
+    def post_announcement(announce, receiver)
+      Notification.create!(
+        kind: 5,
+        user: receiver,
+        sender: announce.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(announce),
+        message: "お知らせ「#{announce.title}」",
+        read: false
+      )
+    end
+
+    def came_question(question, receiver)
+      Notification.create!(
+        kind: 6,
+        user: receiver,
+        sender: question.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(question),
+        message: "#{question.user.login_name}さんから質問がありました。",
+        read: false
+      )
+    end
+
+    def first_report(report, receiver)
+      Notification.create!(
+        kind: 7,
+        user: receiver,
+        sender: report.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(report),
+        message: "#{report.user.login_name}さんがはじめての日報を書きました！",
+        read: false
+      )
+    end
+
+    def watching_notification(watchable, receiver, comment)
+      watchable_user = watchable.user
+      sender = comment.user
+      Notification.create!(
+        kind: 8,
+        user: receiver,
+        sender: sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(watchable),
+        message: "#{watchable_user.login_name}さんの【 #{watchable.notification_title} 】に#{comment.user.login_name}さんがコメントしました。",
+        read: false
+      )
+    end
+
+    def retired(sender, receiver)
+      Notification.create!(
+        kind: 9,
+        user: receiver,
+        sender: sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(sender),
+        message: "#{sender.login_name}さんが退会しました。",
+        read: false
+      )
+    end
+
+    def trainee_report(report, receiver)
+      Notification.create!(
+        kind: 10,
+        user: receiver,
+        sender: report.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(report),
+        message: "#{report.user.login_name}さんが日報【 #{report.title} 】を書きました！",
+        read: false
+      )
+    end
+
+    def moved_up_event_waiting_user(event, receiver)
+      Notification.create!(
+        kind: 11,
+        user: receiver,
+        sender: event.user,
+        path: Rails.application.routes.url_helpers.polymorphic_path(event),
+        message: "#{event.title}で、補欠から参加に繰り上がりました。",
+        read: false
+      )
+    end
+
+    def create_page(page, reciever)
+      Notification.create!(
+        kind: 12,
+        user: reciever,
+        sender: page.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(page),
+        message: "#{page.user.login_name}さんがDocsに#{page.title}を投稿しました。",
+        read: false
+      )
+    end
+
+    def following_report(report, receiver)
+      Notification.create!(
+        kind: 13,
+        user: receiver,
+        sender: report.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(report),
+        message: "#{report.user.login_name}さんが日報【 #{report.title} 】を書きました！",
+        read: false
+      )
+    end
+
+    def chose_correct_answer(answer, receiver)
+      Notification.create!(
+        kind: 14,
+        user: receiver,
+        sender: answer.receiver,
+        path: Rails.application.routes.url_helpers.polymorphic_path(answer.question),
+        message: "#{answer.receiver.login_name}さんの質問【 #{answer.question.title} 】で#{answer.sender.login_name}さんの回答がベストアンサーに選ばれました。",
+        read: false
+      )
+    end
+
+    def consecutive_sad_report(report, receiver)
+      Notification.create!(
+        kind: 15,
+        user: receiver,
+        sender: report.sender,
+        path: Rails.application.routes.url_helpers.polymorphic_path(report),
+        message: "#{report.user.login_name}さんが#{User::DEPRESSED_SIZE}回連続でsadアイコンの日報を提出しました。",
+        read: false
+      )
+    end
+
+    def into_one
+      select(:path).group(:path).maximum(:created_at)
+    end
   end
 
-  def self.checked(check)
-    Notification.create!(
-      kind: 1,
-      user: check.receiver,
-      sender: check.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(check.checkable),
-      message: "#{check.sender.login_name}さんが#{check.checkable.title}を確認しました。",
-      read: false
-    )
+  def others_from_equal_path_to_equal_receiver_exists?(is_equal_kind: false, is_unread: false)
+    optional_query_params = {}
+    optional_query_params.merge(kind: kind) if is_equal_kind
+    optional_query_params.merge(read: false) if is_unread
+
+    others_from_equal_path_to_equal_receiver.where(optional_query_params).exists?
   end
 
-  def self.mentioned(mentionable, receiver)
-    Notification.create!(
-      kind: 2,
-      user: receiver,
-      sender: mentionable.sender,
-      path: mentionable.path,
-      message: "#{mentionable.sender.login_name}さんからメンションがきました。",
-      read: false
-    )
-  end
+  private
 
-  def self.submitted(subject, receiver, message)
-    Notification.create!(
-      kind: 3,
-      user: receiver,
-      sender: subject.user,
-      path: Rails.application.routes.url_helpers.polymorphic_path(subject),
-      message: message,
-      read: false
-    )
-  end
-
-  def self.came_answer(answer)
-    Notification.create!(
-      kind: 4,
-      user: answer.receiver,
-      sender: answer.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(answer.question),
-      message: "#{answer.user.login_name}さんから回答がありました。",
-      read: false
-    )
-  end
-
-  def self.post_announcement(announce, receiver)
-    Notification.create!(
-      kind: 5,
-      user: receiver,
-      sender: announce.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(announce),
-      message: "お知らせ「#{announce.title}」",
-      read: false
-    )
-  end
-
-  def self.came_question(question, receiver)
-    Notification.create!(
-      kind: 6,
-      user: receiver,
-      sender: question.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(question),
-      message: "#{question.user.login_name}さんから質問がありました。",
-      read: false
-    )
-  end
-
-  def self.first_report(report, receiver)
-    Notification.create!(
-      kind: 7,
-      user: receiver,
-      sender: report.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(report),
-      message: "#{report.user.login_name}さんがはじめての日報を書きました！",
-      read: false
-    )
-  end
-
-  def self.watching_notification(watchable, receiver, comment)
-    watchable_user = watchable.user
-    sender = comment.user
-    Notification.create!(
-      kind: 8,
-      user: receiver,
-      sender: sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(watchable),
-      message: "#{watchable_user.login_name}さんの【 #{watchable.notification_title} 】に#{comment.user.login_name}さんがコメントしました。",
-      read: false
-    )
-  end
-
-  def self.retired(sender, receiver)
-    Notification.create!(
-      kind: 9,
-      user: receiver,
-      sender: sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(sender),
-      message: "#{sender.login_name}さんが退会しました。",
-      read: false
-    )
-  end
-
-  def self.trainee_report(report, receiver)
-    Notification.create!(
-      kind: 10,
-      user: receiver,
-      sender: report.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(report),
-      message: "#{report.user.login_name}さんが日報【 #{report.title} 】を書きました！",
-      read: false
-    )
-  end
-
-  def self.moved_up_event_waiting_user(event, receiver)
-    Notification.create!(
-      kind: 11,
-      user: receiver,
-      sender: event.user,
-      path: Rails.application.routes.url_helpers.polymorphic_path(event),
-      message: "#{event.title}で、補欠から参加に繰り上がりました。",
-      read: false
-    )
-  end
-
-  def self.create_page(page, reciever)
-    Notification.create!(
-      kind: 12,
-      user: reciever,
-      sender: page.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(page),
-      message: "#{page.user.login_name}さんがDocsに#{page.title}を投稿しました。",
-      read: false
-    )
-  end
-
-  def self.following_report(report, receiver)
-    Notification.create!(
-      kind: 13,
-      user: receiver,
-      sender: report.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(report),
-      message: "#{report.user.login_name}さんが日報【 #{report.title} 】を書きました！",
-      read: false
-    )
-  end
-
-  def self.chose_correct_answer(answer, receiver)
-    Notification.create!(
-      kind: 14,
-      user: receiver,
-      sender: answer.receiver,
-      path: Rails.application.routes.url_helpers.polymorphic_path(answer.question),
-      message: "#{answer.receiver.login_name}さんの質問【 #{answer.question.title} 】で#{answer.sender.login_name}さんの回答がベストアンサーに選ばれました。",
-      read: false
-    )
-  end
-
-  def self.consecutive_sad_report(report, receiver)
-    Notification.create!(
-      kind: 15,
-      user: receiver,
-      sender: report.sender,
-      path: Rails.application.routes.url_helpers.polymorphic_path(report),
-      message: "#{report.user.login_name}さんが#{User::DEPRESSED_SIZE}回連続でsadアイコンの日報を提出しました。",
-      read: false
-    )
-  end
-
-  def self.into_one
-    select(:path).group(:path).maximum(:created_at)
+  def others_from_equal_path_to_equal_receiver
+    Notification.where.not(id: id).where(path: self[:path], user_id: user_id)
   end
 end
