@@ -59,7 +59,7 @@
               )
                 | コメントする
             .card-main-actions__item.is-only-mentor(
-              v-if='(currentUser.role == "admin" || currentUser.role == "adviser") && commentType && !checkId'
+              v-if='(currentUser.role[0] == "admin" || currentUser.role[0] == "adviser") && commentType && !checkId'
             )
               button.a-button.is-md.is-danger.is-block(
                 @click='commentAndCheck',
@@ -114,7 +114,7 @@ export default {
       return this.$store.getters.checkId
     },
     roleClass() {
-      return `is-${this.currentUser.role}`
+      return `is-${this.currentUser.role[0]}`
     },
     daimyoClass() {
       return { 'is-daimyo': this.currentUser.daimyo }
@@ -213,7 +213,7 @@ export default {
 
           if (
             this.commentableType === 'Product' &&
-            this.isProductAssignableUser(this.currentUser.role) &&
+            this.isProductAssignableUser(this.currentUser.role[0]) &&
             (await this.fetchProductAssign(Number(this.commentableId))) ===
               false
           ) {
