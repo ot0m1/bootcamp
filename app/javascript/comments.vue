@@ -59,7 +59,7 @@
               )
                 | コメントする
             .card-main-actions__item.is-only-mentor(
-              v-if='(currentUser.role.includes("admin") || currentUser.role.includes("adviser")) && commentType && !checkId'
+              v-if='(roleAdmin || roleAdviser) && commentType && !checkId'
             )
               button.a-button.is-md.is-danger.is-block(
                 @click='commentAndCheck',
@@ -118,6 +118,12 @@ export default {
     },
     daimyoClass() {
       return { 'is-daimyo': this.currentUser.daimyo }
+    },
+    roleAdmin: function () {
+      return this.currentUser.role.includes('admin')
+    },
+    roleAdviser: function () {
+      return this.currentUser.role.includes('adviser')
     }
   },
   created() {
