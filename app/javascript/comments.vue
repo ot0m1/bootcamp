@@ -59,7 +59,7 @@
               )
                 | コメントする
             .card-main-actions__item.is-only-mentor(
-              v-if='(currentUser.role[0] == "admin" || currentUser.role[0] == "adviser") && commentType && !checkId'
+              v-if='(currentUser.role.includes("admin") || currentUser.role.includes("adviser")) && commentType && !checkId'
             )
               button.a-button.is-md.is-danger.is-block(
                 @click='commentAndCheck',
