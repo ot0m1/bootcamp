@@ -68,5 +68,8 @@ Rails.application.routes.draw do
     resources :events, only: %i(index)
     resources :report_templates, only: %i(create update)
     resources :markdown_tasks, only: %i(create)
+    resources :companies, only: %i(index show) do
+      resources :users, only: %i(index), controller: "companies/users"
+    end
   end
 end
