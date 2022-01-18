@@ -18,14 +18,12 @@
                 .m-inline-list__items
                   .m-inline-list__item
                     date.m-media-attributes__date
-                      | 2020年12月24日
-                      // published_at
-                      = article.created_at
+                      = l article.created_at
                   .m-inline-list__item
                     .m-media-attributes__author
-                      = image_tag('https://via.placeholder.com/100', class: 'a-circle-image')
+                      = image_tag article.user.avatar_url, class: 'a-circle-image'
                       .m-media-attributes__author-name
-                        | machida
+                        = article.user.login_name
   - if admin_login?
     footer.articles-article__footer
       .m-inline-icon-list
