@@ -36,7 +36,7 @@
                 | （
                 a.a-user-name(:href='documentAuthorUserUrl')
                   | {{ searchable.document_author_login_name }}
-                | {{ searchable.model_name_with_i18n }}
+                | &nbsp;{{ searchable.model_name_with_i18n }}
                 | ）
 </template>
 <script>
@@ -51,9 +51,6 @@ export default {
   computed: {
     modelName() {
       return `is-${this.searchable.model_name}`
-    },
-    modelNameOriginal() {
-      return `is-${this.searchable.model_name_original}`
     },
     userUrl() {
       return `/users/${this.searchable.user_id}`
