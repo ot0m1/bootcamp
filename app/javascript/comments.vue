@@ -114,16 +114,16 @@ export default {
       return this.$store.getters.checkId
     },
     roleClass() {
-      return `is-${this.currentUser.role[0]}`
+      return `is-${this.currentUser.primary_role}`
     },
     daimyoClass() {
       return { 'is-daimyo': this.currentUser.daimyo }
     },
     roleAdmin: function () {
-      return this.currentUser.role.includes('admin')
+      return this.currentUser.roles.includes('admin')
     },
     roleAdviser: function () {
-      return this.currentUser.role.includes('adviser')
+      return this.currentUser.roles.includes('adviser')
     }
   },
   created() {
@@ -219,7 +219,7 @@ export default {
 
           if (
             this.commentableType === 'Product' &&
-            this.isProductAssignableUser(this.currentUser.role[0]) &&
+            this.isProductAssignableUser(this.currentUser.primary_role) &&
             (await this.fetchProductAssign(Number(this.commentableId))) ===
               false
           ) {
